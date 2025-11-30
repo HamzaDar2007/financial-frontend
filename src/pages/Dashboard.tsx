@@ -1,64 +1,81 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import {
     BanknotesIcon,
     ArrowTrendingUpIcon,
     ArrowTrendingDownIcon,
     DocumentTextIcon
 } from '@heroicons/react/24/outline';
-
-const stats = [
-    {
-        title: 'إجمالي الأصول',
-        titleEn: 'Total Assets',
-        value: '1,250,000',
-        currency: 'ر.س',
-        change: '+12.5%',
-        isPositive: true,
-        icon: BanknotesIcon,
-    },
-    {
-        title: 'إجمالي الإيرادات',
-        titleEn: 'Total Revenue',
-        value: '850,000',
-        currency: 'ر.س',
-        change: '+8.2%',
-        isPositive: true,
-        icon: ArrowTrendingUpIcon,
-    },
-    {
-        title: 'إجمالي المصروفات',
-        titleEn: 'Total Expenses',
-        value: '420,000',
-        currency: 'ر.س',
-        change: '-3.1%',
-        isPositive: false,
-        icon: ArrowTrendingDownIcon,
-    },
-    {
-        title: 'صافي الربح',
-        titleEn: 'Net Profit',
-        value: '430,000',
-        currency: 'ر.س',
-        change: '+15.7%',
-        isPositive: true,
-        icon: DocumentTextIcon,
-    },
-];
-
-const recentTransactions = [
-    { id: 1, description: 'فاتورة مبيعات #1234', descriptionEn: 'Sales Invoice #1234', amount: '+25,000', date: '2025-11-28' },
-    { id: 2, description: 'مشتريات مواد خام', descriptionEn: 'Raw Materials Purchase', amount: '-15,000', date: '2025-11-27' },
-    { id: 3, description: 'رواتب الموظفين', descriptionEn: 'Employee Salaries', amount: '-45,000', date: '2025-11-26' },
-    { id: 4, description: 'فاتورة مبيعات #1235', descriptionEn: 'Sales Invoice #1235', amount: '+18,500', date: '2025-11-25' },
-];
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { financialAPI } from '../services/api';
 
 const Dashboard = () => {
+    const { t } = useLanguage();
+    const { user } = useAuth();
+    const [transactions, setTransactions] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!user?.defaultCompanyId) return;
+
+            try {
+                // Fetch recent journal entries
+                const journalRes = await financialAPI.getJournalEntries(user.defaultCompanyId);
+                // Take last 5 entries
+                setTransactions(journalRes.data.slice(0, 5));
+            } catch (err) {
+                console.error('Failed to fetch dashboard data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [user]);
+
+    const stats = [
+        {
+            title: t('stats.assets'),
+            value: '1,250,000', // Still mock for now as we need complex calculation
+            currency: t('currency'),
+            change: '+12.5%',
+            isPositive: true,
+            icon: BanknotesIcon,
+        },
+        {
+            title: t('stats.revenue'),
+            value: '850,000',
+            currency: t('currency'),
+            change: '+8.2%',
+            isPositive: true,
+            icon: ArrowTrendingUpIcon,
+        },
+        {
+            title: t('stats.expenses'),
+            value: '420,000',
+            currency: t('currency'),
+            change: '-3.1%',
+            isPositive: false,
+            icon: ArrowTrendingDownIcon,
+        },
+        {
+            title: t('stats.profit'),
+            value: '430,000',
+            currency: t('currency'),
+            change: '+15.7%',
+            isPositive: true,
+            icon: DocumentTextIcon,
+        },
+    ];
+
     return (
         <div className="space-y-8">
             {/* Page Header */}
             <div>
-                <h1 className="text-4xl font-light text-white mb-2">لوحة التحكم</h1>
-                <p className="text-silver">Dashboard Overview</p>
+                <h1 className="text-4xl font-light text-white mb-2">{t('dashboard.title')}</h1>
+                <p className="text-silver">{t('dashboard.subtitle')}</p>
             </div>
 
             {/* Stats Grid - Bento Layout */}
@@ -84,7 +101,6 @@ const Dashboard = () => {
                             </div>
 
                             <h3 className="text-silver text-sm mb-1">{stat.title}</h3>
-                            <p className="text-silver/60 text-xs mb-3">{stat.titleEn}</p>
 
                             <div className="flex items-baseline gap-2">
                                 <span className="text-3xl font-light text-white">{stat.value}</span>
@@ -104,36 +120,41 @@ const Dashboard = () => {
             >
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h2 className="text-2xl font-light text-white mb-1">المعاملات الأخيرة</h2>
-                        <p className="text-silver text-sm">Recent Transactions</p>
+                        <h2 className="text-2xl font-light text-white mb-1">{t('transactions.title')}</h2>
                     </div>
                     <button className="btn-secondary text-sm">
-                        عرض الكل
+                        {t('transactions.viewAll')}
                     </button>
                 </div>
 
                 <div className="space-y-3">
-                    {recentTransactions.map((transaction, index) => (
-                        <motion.div
-                            key={transaction.id}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.5 + index * 0.1 }}
-                            whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}
-                            className="flex items-center justify-between p-4 rounded-lg border border-white/[0.05] hover:border-white/[0.1] transition-all"
-                        >
-                            <div className="flex-1">
-                                <p className="text-white font-medium mb-1">{transaction.description}</p>
-                                <p className="text-silver text-sm">{transaction.descriptionEn}</p>
-                            </div>
-                            <div className="text-left">
-                                <p className={`text-lg font-medium ${transaction.amount.startsWith('+') ? 'text-emerald' : 'text-ruby'}`}>
-                                    {transaction.amount} ر.س
-                                </p>
-                                <p className="text-silver text-xs">{transaction.date}</p>
-                            </div>
-                        </motion.div>
-                    ))}
+                    {loading ? (
+                        <div className="text-silver text-center py-4">Loading transactions...</div>
+                    ) : transactions.length > 0 ? (
+                        transactions.map((transaction, index) => (
+                            <motion.div
+                                key={transaction.id}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.5 + index * 0.1 }}
+                                whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}
+                                className="flex items-center justify-between p-4 rounded-lg border border-white/[0.05] hover:border-white/[0.1] transition-all"
+                            >
+                                <div className="flex-1">
+                                    <p className="text-white font-medium mb-1">{transaction.description || 'Journal Entry'}</p>
+                                    <p className="text-silver text-xs">{transaction.reference}</p>
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-lg font-medium text-white">
+                                        {transaction.totalAmount} {t('currency')}
+                                    </p>
+                                    <p className="text-silver text-xs">{new Date(transaction.date).toLocaleDateString()}</p>
+                                </div>
+                            </motion.div>
+                        ))
+                    ) : (
+                        <div className="text-silver text-center py-4">No recent transactions found.</div>
+                    )}
                 </div>
             </motion.div>
         </div>

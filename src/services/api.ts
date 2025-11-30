@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-    login: (credentials: { username: string; password: string }) =>
+    login: (credentials: { email: string; password: string }) =>
         apiClient.post('/auth/login', credentials),
 
     register: (data: any) =>
@@ -55,24 +55,24 @@ export const authAPI = {
 // Financial API
 export const financialAPI = {
     // Accounts
-    getAccounts: () =>
-        apiClient.get('/financial/accounts'),
+    getAccounts: (companyId: string) =>
+        apiClient.get(`/accounts?companyId=${companyId}`),
 
     createAccount: (data: any) =>
-        apiClient.post('/financial/accounts', data),
+        apiClient.post('/accounts', data),
 
     updateAccount: (id: string, data: any) =>
-        apiClient.patch(`/financial/accounts/${id}`, data),
+        apiClient.patch(`/accounts/${id}`, data),
 
     deleteAccount: (id: string) =>
-        apiClient.delete(`/financial/accounts/${id}`),
+        apiClient.delete(`/accounts/${id}`),
 
     // Journal Entries
-    getJournalEntries: () =>
-        apiClient.get('/financial/journal'),
+    getJournalEntries: (companyId: string) =>
+        apiClient.get(`/journal?companyId=${companyId}`),
 
     createJournalEntry: (data: any) =>
-        apiClient.post('/financial/journal', data),
+        apiClient.post('/journal', data),
 
     // Currencies
     getCurrencies: () =>
@@ -85,8 +85,8 @@ export const financialAPI = {
 
 // Sales API
 export const salesAPI = {
-    getSalesOrders: () =>
-        apiClient.get('/sales-orders'),
+    getSalesOrders: (companyId: string) =>
+        apiClient.get(`/sales-orders/${companyId}`),
 
     createSalesOrder: (data: any) =>
         apiClient.post('/sales-orders', data),
@@ -106,8 +106,8 @@ export const salesAPI = {
 
 // Purchases API
 export const purchasesAPI = {
-    getPurchaseOrders: () =>
-        apiClient.get('/purchase-orders'),
+    getPurchaseOrders: (companyId: string) =>
+        apiClient.get(`/purchase-orders/company/${companyId}`),
 
     createPurchaseOrder: (data: any) =>
         apiClient.post('/purchase-orders', data),
@@ -115,8 +115,8 @@ export const purchasesAPI = {
 
 // Inventory API
 export const inventoryAPI = {
-    getProducts: () =>
-        apiClient.get('/products'),
+    getProducts: (companyId: string) =>
+        apiClient.get(`/products?companyId=${companyId}`),
 
     createProduct: (data: any) =>
         apiClient.post('/products', data),
@@ -133,11 +133,11 @@ export const contactsAPI = {
     getCompanies: () =>
         apiClient.get('/companies'),
 
-    getContacts: () =>
-        apiClient.get('/company-contacts'),
+    getContacts: (companyId: string) =>
+        apiClient.get(`/contacts/company/${companyId}`),
 
     createContact: (data: any) =>
-        apiClient.post('/company-contacts', data),
+        apiClient.post('/contacts', data),
 
     getEmployees: () =>
         apiClient.get('/employees'),

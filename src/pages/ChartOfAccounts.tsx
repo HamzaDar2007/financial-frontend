@@ -1,76 +1,30 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     ChevronDownIcon,
     ChevronLeftIcon,
+    ChevronRightIcon,
     PlusIcon,
     PencilIcon,
     TrashIcon
 } from '@heroicons/react/24/outline';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { financialAPI } from '../services/api';
 
 interface Account {
     id: string;
     accountName: string;
+    accountNameEn?: string; // Optional if backend doesn't provide it yet
     accountType: string;
     parentAccountId?: string;
     children?: Account[];
     balance?: number;
 }
 
-// Mock data - Replace with API call
-const mockAccounts: Account[] = [
-    {
-        id: '1',
-        accountName: 'الأصول',
-        accountType: 'ASSET',
-        children: [
-            {
-                id: '1-1',
-                accountName: 'الأصول المتداولة',
-                accountType: 'ASSET',
-                parentAccountId: '1',
-                children: [
-                    {
-                        id: '1-1-1',
-                        accountName: 'النقدية والبنوك',
-                        accountType: 'ASSET',
-                        parentAccountId: '1-1',
-                        children: [
-                            { id: '1-1-1-1', accountName: 'الصندوق', accountType: 'ASSET', parentAccountId: '1-1-1', balance: 50000 },
-                            { id: '1-1-1-2', accountName: 'البنك الأهلي', accountType: 'ASSET', parentAccountId: '1-1-1', balance: 250000 },
-                        ]
-                    },
-                    {
-                        id: '1-1-2',
-                        accountName: 'المخزون',
-                        accountType: 'ASSET',
-                        parentAccountId: '1-1',
-                        balance: 180000
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        id: '2',
-        accountName: 'الخصوم',
-        accountType: 'LIABILITY',
-        children: [
-            {
-                id: '2-1',
-                accountName: 'الخصوم المتداولة',
-                accountType: 'LIABILITY',
-                parentAccountId: '2',
-                children: [
-                    { id: '2-1-1', accountName: 'الموردون', accountType: 'LIABILITY', parentAccountId: '2-1', balance: 75000 },
-                ]
-            }
-        ]
-    }
-];
-
 const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { t, language } = useLanguage();
     const hasChildren = account.children && account.children.length > 0;
 
     const getTypeColor = (type: string) => {
@@ -84,6 +38,8 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
         }
     };
 
+    const ChevronIcon = language === 'ur' ? ChevronLeftIcon : ChevronRightIcon;
+
     return (
         <>
             <motion.div
@@ -91,7 +47,7 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 animate={{ opacity: 1, x: 0 }}
                 whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}
                 className="flex items-center gap-4 p-4 border-b border-white/[0.05] cursor-pointer"
-                style={{ paddingRight: `${level * 2 + 1}rem` }}
+                style={{ [language === 'ur' ? 'paddingRight' : 'paddingLeft']: `${level * 2 + 1}rem` }}
             >
                 {/* Expand/Collapse Button */}
                 <button
@@ -102,7 +58,7 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                         isExpanded ? (
                             <ChevronDownIcon className="w-4 h-4 text-gold" />
                         ) : (
-                            <ChevronLeftIcon className="w-4 h-4 text-silver" />
+                            <ChevronIcon className="w-4 h-4 text-silver" />
                         )
                     ) : (
                         <div className="w-2 h-2 rounded-full bg-silver/30"></div>
@@ -112,7 +68,9 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 {/* Account Name */}
                 <div className="flex-1">
                     <p className="text-white font-medium">{account.accountName}</p>
-                    <p className="text-silver text-xs">{account.id}</p>
+                    {account.accountNameEn && (
+                        <p className="text-silver text-xs">{account.accountNameEn}</p>
+                    )}
                 </div>
 
                 {/* Account Type */}
@@ -121,11 +79,9 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 </span>
 
                 {/* Balance */}
-                {account.balance !== undefined && (
-                    <span className="text-white font-mono w-32 text-left">
-                        {account.balance.toLocaleString()} ر.س
-                    </span>
-                )}
+                <span className="text-white font-mono w-32 text-left">
+                    {account.balance ? account.balance.toLocaleString() : '0'} {t('currency')}
+                </span>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
@@ -163,13 +119,64 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
 };
 
 const ChartOfAccounts = () => {
+    const { t } = useLanguage();
+    const { user } = useAuth();
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            if (!user?.defaultCompanyId) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const response = await financialAPI.getAccounts(user.defaultCompanyId);
+                const flatAccounts = response.data;
+                const tree = buildAccountTree(flatAccounts);
+                setAccounts(tree);
+            } catch (err) {
+                console.error('Failed to fetch accounts:', err);
+                setError('Failed to load accounts.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAccounts();
+    }, [user]);
+
+    const buildAccountTree = (flatList: any[]): Account[] => {
+        const map = new Map<string, Account>();
+        const roots: Account[] = [];
+
+        // First pass: create nodes
+        flatList.forEach(item => {
+            map.set(item.id, { ...item, children: [] });
+        });
+
+        // Second pass: connect children to parents
+        flatList.forEach(item => {
+            const node = map.get(item.id)!;
+            if (item.parentAccountId && map.has(item.parentAccountId)) {
+                map.get(item.parentAccountId)!.children!.push(node);
+            } else {
+                roots.push(node);
+            }
+        });
+
+        return roots;
+    };
+
     return (
         <div className="space-y-6">
             {/* Page Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-4xl font-light text-white mb-2">شجرة الحسابات</h1>
-                    <p className="text-silver">Chart of Accounts - Hierarchical View</p>
+                    <h1 className="text-4xl font-light text-white mb-2">{t('accounts.title')}</h1>
+                    <p className="text-silver">{t('accounts.subtitle')}</p>
                 </div>
                 <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -177,9 +184,16 @@ const ChartOfAccounts = () => {
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
-                    إضافة حساب جديد
+                    {t('accounts.add')}
                 </motion.button>
             </div>
+
+            {/* Error Message */}
+            {error && (
+                <div className="bg-ruby/10 border border-ruby/20 text-ruby p-4 rounded-lg">
+                    {error}
+                </div>
+            )}
 
             {/* Accounts Tree */}
             <motion.div
@@ -190,17 +204,23 @@ const ChartOfAccounts = () => {
                 {/* Table Header */}
                 <div className="flex items-center gap-4 p-4 border-b border-white/[0.08] bg-charcoal/50">
                     <div className="w-6"></div>
-                    <div className="flex-1 text-silver text-sm font-medium">اسم الحساب</div>
-                    <div className="text-silver text-sm font-medium w-24">النوع</div>
-                    <div className="text-silver text-sm font-medium w-32">الرصيد</div>
-                    <div className="text-silver text-sm font-medium w-24">الإجراءات</div>
+                    <div className="flex-1 text-silver text-sm font-medium">{t('accounts.name')}</div>
+                    <div className="text-silver text-sm font-medium w-24">{t('accounts.type')}</div>
+                    <div className="text-silver text-sm font-medium w-32">{t('accounts.balance')}</div>
+                    <div className="text-silver text-sm font-medium w-24">{t('accounts.actions')}</div>
                 </div>
 
                 {/* Accounts List */}
                 <div>
-                    {mockAccounts.map((account) => (
-                        <AccountRow key={account.id} account={account} />
-                    ))}
+                    {loading ? (
+                        <div className="p-8 text-center text-silver">Loading accounts...</div>
+                    ) : accounts.length > 0 ? (
+                        accounts.map((account) => (
+                            <AccountRow key={account.id} account={account} />
+                        ))
+                    ) : (
+                        <div className="p-8 text-center text-silver">No accounts found.</div>
+                    )}
                 </div>
             </motion.div>
 
@@ -208,15 +228,15 @@ const ChartOfAccounts = () => {
             <div className="flex items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-emerald"></div>
-                    <span className="text-silver">أصول / Assets</span>
+                    <span className="text-silver">{t('accounts.assets')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-ruby"></div>
-                    <span className="text-silver">خصوم / Liabilities</span>
+                    <span className="text-silver">{t('accounts.liabilities')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-gold"></div>
-                    <span className="text-silver">حقوق ملكية / Equity</span>
+                    <span className="text-silver">{t('accounts.equity')}</span>
                 </div>
             </div>
         </div>

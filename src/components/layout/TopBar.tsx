@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
-import { MagnifyingGlassIcon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, BellIcon, UserCircleIcon, LanguageIcon } from '@heroicons/react/24/outline';
+import { useLanguage } from '../../context/LanguageContext';
 
 const TopBar = () => {
+    const { t, toggleLanguage, language } = useLanguage();
+
     return (
         <motion.header
             initial={{ y: -20, opacity: 0 }}
@@ -13,17 +16,29 @@ const TopBar = () => {
                 {/* Search Bar */}
                 <div className="flex-1 max-w-xl">
                     <div className="relative">
-                        <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-silver" />
+                        <MagnifyingGlassIcon className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-silver ${language === 'ur' ? 'right-3' : 'left-3'}`} />
                         <input
                             type="text"
-                            placeholder="بحث... Search..."
-                            className="input-field w-full pr-10"
+                            placeholder={t('search.placeholder')}
+                            className={`input-field w-full ${language === 'ur' ? 'pr-10' : 'pl-10'}`}
                         />
                     </div>
                 </div>
 
                 {/* Right Side Actions */}
                 <div className="flex items-center gap-4">
+                    {/* Language Toggle */}
+                    <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={toggleLanguage}
+                        className="p-2 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-2"
+                        title="Switch Language"
+                    >
+                        <LanguageIcon className="w-6 h-6 text-gold" />
+                        <span className="text-sm text-silver font-medium uppercase">{language}</span>
+                    </motion.button>
+
                     {/* Notifications */}
                     <motion.button
                         whileHover={{ scale: 1.1 }}
