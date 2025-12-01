@@ -4,11 +4,12 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { salesAPI } from '../services/api';
+import type { SalesOrder } from '../types';
 
 const Sales = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
-    const [orders, setOrders] = useState<any[]>([]);
+    const [orders, setOrders] = useState<SalesOrder[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -69,10 +70,10 @@ const Sales = () => {
                     {loading ? (
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : orders.length > 0 ? (
-                        orders.map((order: any) => (
+                        orders.map((order) => (
                             <div key={order.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
                                 <div className="flex-1 text-white">{order.orderNumber}</div>
-                                <div className="text-silver text-sm w-32">{order.customerName || 'N/A'}</div>
+                                <div className="text-silver text-sm w-32">{order.customer?.name || 'N/A'}</div>
                                 <div className="text-silver text-sm w-32">{new Date(order.orderDate).toLocaleDateString()}</div>
                                 <div className="text-white font-mono w-32">{order.totalAmount} {t('currency')}</div>
                                 <div className="text-silver text-sm w-32">{order.status}</div>

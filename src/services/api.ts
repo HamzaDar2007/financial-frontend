@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { Account, JournalEntry, Company, User } from '../types';
 
 const API_BASE_URL = 'http://localhost:3000';
 
@@ -40,13 +41,13 @@ apiClient.interceptors.response.use(
 // Auth API
 export const authAPI = {
     login: (credentials: { email: string; password: string }) =>
-        apiClient.post('/auth/login', credentials),
+        apiClient.post<{ accessToken: string; user: User }>('/auth/login', credentials),
 
     register: (data: any) =>
-        apiClient.post('/auth/register', data),
+        apiClient.post<User>('/auth/register', data),
 
     getProfile: () =>
-        apiClient.get('/auth/profile'),
+        apiClient.get<User>('/auth/profile'),
 
     toggle2FA: () =>
         apiClient.patch('/auth/2fa'),
@@ -56,23 +57,23 @@ export const authAPI = {
 export const financialAPI = {
     // Accounts
     getAccounts: (companyId: string) =>
-        apiClient.get(`/accounts?companyId=${companyId}`),
+        apiClient.get<Account[]>(`/accounts?companyId=${companyId}`),
 
-    createAccount: (data: any) =>
-        apiClient.post('/accounts', data),
+    createAccount: (data: Partial<Account>) =>
+        apiClient.post<Account>('/accounts', data),
 
-    updateAccount: (id: string, data: any) =>
-        apiClient.patch(`/accounts/${id}`, data),
+    updateAccount: (id: string, data: Partial<Account>) =>
+        apiClient.patch<Account>(`/accounts/${id}`, data),
 
     deleteAccount: (id: string) =>
-        apiClient.delete(`/accounts/${id}`),
+        apiClient.delete<void>(`/accounts/${id}`),
 
     // Journal Entries
     getJournalEntries: (companyId: string) =>
-        apiClient.get(`/journal?companyId=${companyId}`),
+        apiClient.get<JournalEntry[]>(`/journal?companyId=${companyId}`),
 
     createJournalEntry: (data: any) =>
-        apiClient.post('/journal', data),
+        apiClient.post<JournalEntry>('/journal', data),
 
     // Currencies
     getCurrencies: () =>
@@ -83,10 +84,14 @@ export const financialAPI = {
         apiClient.get('/financial/exchange-rates'),
 };
 
+import type { SalesOrder } from '../types';
+
+// ... (existing imports)
+
 // Sales API
 export const salesAPI = {
     getSalesOrders: (companyId: string) =>
-        apiClient.get(`/sales-orders/${companyId}`),
+        apiClient.get<SalesOrder[]>(`/sales-orders/${companyId}`),
 
     createSalesOrder: (data: any) =>
         apiClient.post('/sales-orders', data),
@@ -131,7 +136,7 @@ export const inventoryAPI = {
 // Contacts API
 export const contactsAPI = {
     getCompanies: () =>
-        apiClient.get('/companies'),
+        apiClient.get<Company[]>('/companies'),
 
     getContacts: (companyId: string) =>
         apiClient.get(`/contacts/company/${companyId}`),
@@ -158,10 +163,10 @@ export const reportsAPI = {
 // Admin API
 export const adminAPI = {
     getUsers: () =>
-        apiClient.get('/users'),
+        apiClient.get<User[]>('/users'),
 
     createUser: (data: any) =>
-        apiClient.post('/users', data),
+        apiClient.post<User>('/users', data),
 
     getRoles: () =>
         apiClient.get('/roles'),

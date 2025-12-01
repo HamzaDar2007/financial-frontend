@@ -11,16 +11,7 @@ import {
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { financialAPI } from '../services/api';
-
-interface Account {
-    id: string;
-    accountName: string;
-    accountNameEn?: string; // Optional if backend doesn't provide it yet
-    accountType: string;
-    parentAccountId?: string;
-    children?: Account[];
-    balance?: number;
-}
+import type { Account } from '../types';
 
 const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -68,9 +59,6 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 {/* Account Name */}
                 <div className="flex-1">
                     <p className="text-white font-medium">{account.accountName}</p>
-                    {account.accountNameEn && (
-                        <p className="text-silver text-xs">{account.accountNameEn}</p>
-                    )}
                 </div>
 
                 {/* Account Type */}
@@ -80,7 +68,8 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
 
                 {/* Balance */}
                 <span className="text-white font-mono w-32 text-left">
-                    {account.balance ? account.balance.toLocaleString() : '0'} {t('currency')}
+                    {/* Use initialBalance for now as backend doesn't provide calculated balance yet */}
+                    {account.initialBalance ? account.initialBalance.toLocaleString() : '0'} {t('currency')}
                 </span>
 
                 {/* Actions */}
@@ -148,7 +137,7 @@ const ChartOfAccounts = () => {
         fetchAccounts();
     }, [user]);
 
-    const buildAccountTree = (flatList: any[]): Account[] => {
+    const buildAccountTree = (flatList: Account[]): Account[] => {
         const map = new Map<string, Account>();
         const roots: Account[] = [];
 
