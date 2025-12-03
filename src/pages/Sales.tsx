@@ -2,22 +2,14 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-<<<<<<< HEAD
-import { invoicesAPI } from '../services/api';
-
-const Sales = () => {
-    const { t } = useLanguage();
-    const [orders, setOrders] = useState<any[]>([]);
-=======
 import { useAuth } from '../context/AuthContext';
-import { salesAPI } from '../services/api';
+import { salesAPI, invoicesAPI } from '../services/api';
 import type { SalesOrder } from '../types';
 
 const Sales = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
     const [orders, setOrders] = useState<SalesOrder[]>([]);
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 

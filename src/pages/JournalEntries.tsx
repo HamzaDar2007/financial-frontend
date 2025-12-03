@@ -2,22 +2,14 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-<<<<<<< HEAD
-import { journalEntriesAPI } from '../services/api';
-
-const JournalEntries = () => {
-    const { t } = useLanguage();
-    const [entries, setEntries] = useState<any[]>([]);
-=======
 import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { journalEntriesAPI, financialAPI } from '../services/api';
 import type { JournalEntry } from '../types';
 
 const JournalEntries = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
     const [entries, setEntries] = useState<JournalEntry[]>([]);
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 

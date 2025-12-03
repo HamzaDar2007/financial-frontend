@@ -8,12 +8,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-<<<<<<< HEAD
-import { journalEntriesAPI } from '../services/api';
-=======
-import { financialAPI } from '../services/api';
+import { journalEntriesAPI, financialAPI } from '../services/api';
 import type { JournalEntry } from '../types';
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
 const Dashboard = () => {
     const { t } = useLanguage();

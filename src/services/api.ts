@@ -43,20 +43,7 @@ export const authAPI = {
     login: (credentials: { email: string; password: string }) =>
         apiClient.post<{ accessToken: string; user: User }>('/auth/login', credentials),
 
-<<<<<<< HEAD
     register: (data: { email: string; password: string; firstName: string; lastName: string }) =>
-        apiClient.post('/auth/register', data),
-
-    getProfile: () =>
-        apiClient.get('/auth/profile'),
-};
-
-// ==================== COMPANIES API ====================
-export const companiesAPI = {
-    getAll: () =>
-        apiClient.get('/companies'),
-=======
-    register: (data: any) =>
         apiClient.post<User>('/auth/register', data),
 
     getProfile: () =>
@@ -96,10 +83,6 @@ export const financialAPI = {
     getExchangeRates: () =>
         apiClient.get('/financial/exchange-rates'),
 };
-
-import type { SalesOrder } from '../types';
-
-// ... (existing imports)
 
 // Sales API
 export const salesAPI = {
@@ -146,11 +129,10 @@ export const inventoryAPI = {
         apiClient.get('/uom'),
 };
 
-// Contacts API
-export const contactsAPI = {
-    getCompanies: () =>
+// ==================== COMPANIES API ====================
+export const companiesAPI = {
+    getAll: () =>
         apiClient.get<Company[]>('/companies'),
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
     getById: (id: string) =>
         apiClient.get(`/companies/${id}`),
@@ -414,7 +396,6 @@ export const reportsAPI = {
         apiClient.get('/reports/day-book', { params }),
 };
 
-<<<<<<< HEAD
 // ==================== RECONCILIATIONS API ====================
 export const reconciliationsAPI = {
     getAll: () =>
@@ -505,22 +486,13 @@ export const balancesAPI = {
 // ==================== USERS API ====================
 export const usersAPI = {
     getAll: () =>
-        apiClient.get('/users'),
+        apiClient.get<User[]>('/users'),
 
     getById: (id: string) =>
         apiClient.get(`/users/${id}`),
 
     create: (data: any) =>
-        apiClient.post('/users', data),
-=======
-// Admin API
-export const adminAPI = {
-    getUsers: () =>
-        apiClient.get<User[]>('/users'),
-
-    createUser: (data: any) =>
         apiClient.post<User>('/users', data),
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
     update: (id: string, data: any) =>
         apiClient.patch(`/users/${id}`, data),

@@ -10,22 +10,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-<<<<<<< HEAD
-import { accountsAPI } from '../services/api';
-
-interface Account {
-    id: string;
-    accountName: string;
-    accountNameEn?: string; // Optional if backend doesn't provide it yet
-    accountType: string;
-    parentAccountId?: string;
-    children?: Account[];
-    balance?: number;
-}
-=======
-import { financialAPI } from '../services/api';
+import { accountsAPI, financialAPI } from '../services/api';
 import type { Account } from '../types';
->>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
 const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }) => {
     const [isExpanded, setIsExpanded] = useState(false);
