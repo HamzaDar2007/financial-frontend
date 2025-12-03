@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { accountsAPI } from '../services/api';
 
 interface Account {
@@ -21,6 +22,10 @@ interface Account {
     children?: Account[];
     balance?: number;
 }
+=======
+import { financialAPI } from '../services/api';
+import type { Account } from '../types';
+>>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
 const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -68,9 +73,6 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 {/* Account Name */}
                 <div className="flex-1">
                     <p className="text-white font-medium">{account.accountName}</p>
-                    {account.accountNameEn && (
-                        <p className="text-silver text-xs">{account.accountNameEn}</p>
-                    )}
                 </div>
 
                 {/* Account Type */}
@@ -80,7 +82,8 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
 
                 {/* Balance */}
                 <span className="text-white font-mono w-32 text-left">
-                    {account.balance ? account.balance.toLocaleString() : '0'} {t('currency')}
+                    {/* Use initialBalance for now as backend doesn't provide calculated balance yet */}
+                    {account.initialBalance ? account.initialBalance.toLocaleString() : '0'} {t('currency')}
                 </span>
 
                 {/* Actions */}
@@ -143,7 +146,7 @@ const ChartOfAccounts = () => {
         fetchAccounts();
     }, [user]);
 
-    const buildAccountTree = (flatList: any[]): Account[] => {
+    const buildAccountTree = (flatList: Account[]): Account[] => {
         const map = new Map<string, Account>();
         const roots: Account[] = [];
 
@@ -189,6 +192,7 @@ const ChartOfAccounts = () => {
                     {error}
                 </div>
             )}
+
 
             {/* Accounts Tree */}
             <motion.div

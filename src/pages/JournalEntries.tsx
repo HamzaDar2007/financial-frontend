@@ -2,11 +2,22 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
+<<<<<<< HEAD
 import { journalEntriesAPI } from '../services/api';
 
 const JournalEntries = () => {
     const { t } = useLanguage();
     const [entries, setEntries] = useState<any[]>([]);
+=======
+import { useAuth } from '../context/AuthContext';
+import { financialAPI } from '../services/api';
+import type { JournalEntry } from '../types';
+
+const JournalEntries = () => {
+    const { t } = useLanguage();
+    const { user } = useAuth();
+    const [entries, setEntries] = useState<JournalEntry[]>([]);
+>>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -25,6 +36,10 @@ const JournalEntries = () => {
 
         fetchEntries();
     }, []);
+
+    const calculateTotal = (entry: JournalEntry) => {
+        return entry.lines.reduce((sum, line) => sum + Number(line.debit), 0);
+    };
 
     return (
         <div className="space-y-6">
@@ -65,12 +80,12 @@ const JournalEntries = () => {
                     {loading ? (
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : entries.length > 0 ? (
-                        entries.map((entry: any) => (
+                        entries.map((entry) => (
                             <div key={entry.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
-                                <div className="flex-1 text-white">{entry.description}</div>
-                                <div className="text-silver text-sm w-32">{entry.reference}</div>
-                                <div className="text-silver text-sm w-32">{new Date(entry.date).toLocaleDateString()}</div>
-                                <div className="text-white font-mono w-32">{entry.totalAmount} {t('currency')}</div>
+                                <div className="flex-1 text-white">{entry.description || 'Journal Entry'}</div>
+                                <div className="text-silver text-sm w-32">{entry.reference || '-'}</div>
+                                <div className="text-silver text-sm w-32">{new Date(entry.entryDate).toLocaleDateString()}</div>
+                                <div className="text-white font-mono w-32">{calculateTotal(entry).toLocaleString()} {t('currency')}</div>
                             </div>
                         ))
                     ) : (

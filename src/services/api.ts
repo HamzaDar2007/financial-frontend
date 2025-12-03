@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { Account, JournalEntry, Company, User } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -40,8 +41,9 @@ apiClient.interceptors.response.use(
 // ==================== AUTH API ====================
 export const authAPI = {
     login: (credentials: { email: string; password: string }) =>
-        apiClient.post('/auth/login', credentials),
+        apiClient.post<{ accessToken: string; user: User }>('/auth/login', credentials),
 
+<<<<<<< HEAD
     register: (data: { email: string; password: string; firstName: string; lastName: string }) =>
         apiClient.post('/auth/register', data),
 
@@ -53,6 +55,102 @@ export const authAPI = {
 export const companiesAPI = {
     getAll: () =>
         apiClient.get('/companies'),
+=======
+    register: (data: any) =>
+        apiClient.post<User>('/auth/register', data),
+
+    getProfile: () =>
+        apiClient.get<User>('/auth/profile'),
+
+    toggle2FA: () =>
+        apiClient.patch('/auth/2fa'),
+};
+
+// Financial API
+export const financialAPI = {
+    // Accounts
+    getAccounts: (companyId: string) =>
+        apiClient.get<Account[]>(`/accounts?companyId=${companyId}`),
+
+    createAccount: (data: Partial<Account>) =>
+        apiClient.post<Account>('/accounts', data),
+
+    updateAccount: (id: string, data: Partial<Account>) =>
+        apiClient.patch<Account>(`/accounts/${id}`, data),
+
+    deleteAccount: (id: string) =>
+        apiClient.delete<void>(`/accounts/${id}`),
+
+    // Journal Entries
+    getJournalEntries: (companyId: string) =>
+        apiClient.get<JournalEntry[]>(`/journal?companyId=${companyId}`),
+
+    createJournalEntry: (data: any) =>
+        apiClient.post<JournalEntry>('/journal', data),
+
+    // Currencies
+    getCurrencies: () =>
+        apiClient.get('/financial/currencies'),
+
+    // Exchange Rates
+    getExchangeRates: () =>
+        apiClient.get('/financial/exchange-rates'),
+};
+
+import type { SalesOrder } from '../types';
+
+// ... (existing imports)
+
+// Sales API
+export const salesAPI = {
+    getSalesOrders: (companyId: string) =>
+        apiClient.get<SalesOrder[]>(`/sales-orders/${companyId}`),
+
+    createSalesOrder: (data: any) =>
+        apiClient.post('/sales-orders', data),
+
+    getInvoices: () =>
+        apiClient.get('/invoices'),
+
+    createInvoice: (data: any) =>
+        apiClient.post('/invoices', data),
+
+    getPayments: () =>
+        apiClient.get('/payments'),
+
+    createPayment: (data: any) =>
+        apiClient.post('/payments', data),
+};
+
+// Purchases API
+export const purchasesAPI = {
+    getPurchaseOrders: (companyId: string) =>
+        apiClient.get(`/purchase-orders/company/${companyId}`),
+
+    createPurchaseOrder: (data: any) =>
+        apiClient.post('/purchase-orders', data),
+};
+
+// Inventory API
+export const inventoryAPI = {
+    getProducts: (companyId: string) =>
+        apiClient.get(`/products?companyId=${companyId}`),
+
+    createProduct: (data: any) =>
+        apiClient.post('/products', data),
+
+    getWarehouses: () =>
+        apiClient.get('/warehouses'),
+
+    getUnitsOfMeasure: () =>
+        apiClient.get('/uom'),
+};
+
+// Contacts API
+export const contactsAPI = {
+    getCompanies: () =>
+        apiClient.get<Company[]>('/companies'),
+>>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
     getById: (id: string) =>
         apiClient.get(`/companies/${id}`),
@@ -316,6 +414,7 @@ export const reportsAPI = {
         apiClient.get('/reports/day-book', { params }),
 };
 
+<<<<<<< HEAD
 // ==================== RECONCILIATIONS API ====================
 export const reconciliationsAPI = {
     getAll: () =>
@@ -413,6 +512,15 @@ export const usersAPI = {
 
     create: (data: any) =>
         apiClient.post('/users', data),
+=======
+// Admin API
+export const adminAPI = {
+    getUsers: () =>
+        apiClient.get<User[]>('/users'),
+
+    createUser: (data: any) =>
+        apiClient.post<User>('/users', data),
+>>>>>>> 4250e4ea9131537ba4b4829de554d0c59e151439
 
     update: (id: string, data: any) =>
         apiClient.patch(`/users/${id}`, data),
