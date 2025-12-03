@@ -2,21 +2,18 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { inventoryAPI } from '../services/api';
+import { itemsAPI } from '../services/api';
 
 const Inventory = () => {
     const { t } = useLanguage();
-    const { user } = useAuth();
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchProducts = async () => {
-            if (!user?.defaultCompanyId) return;
             try {
-                const response = await inventoryAPI.getProducts(user.defaultCompanyId);
+                const response = await itemsAPI.getAll();
                 setProducts(response.data);
             } catch (err) {
                 console.error('Failed to fetch products:', err);
@@ -27,7 +24,7 @@ const Inventory = () => {
         };
 
         fetchProducts();
-    }, [user]);
+    }, []);
 
     return (
         <div className="space-y-6">

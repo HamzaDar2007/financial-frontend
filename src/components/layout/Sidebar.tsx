@@ -6,9 +6,14 @@ import {
     DocumentTextIcon,
     ShoppingCartIcon,
     CubeIcon,
-    UsersIcon,
     CogIcon,
-    BanknotesIcon
+    BanknotesIcon,
+    UserGroupIcon,
+    BuildingOfficeIcon,
+    DocumentDuplicateIcon,
+    ChartPieIcon,
+    BriefcaseIcon,
+    ScaleIcon
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -20,10 +25,17 @@ const Sidebar = () => {
         { key: 'menu.dashboard', path: '/', icon: HomeIcon },
         { key: 'menu.accounts', path: '/accounts', icon: ChartBarIcon },
         { key: 'menu.journal', path: '/journal', icon: DocumentTextIcon },
+        { key: 'menu.customers', path: '/customers', icon: UserGroupIcon },
+        { key: 'menu.suppliers', path: '/suppliers', icon: BuildingOfficeIcon },
+        { key: 'menu.invoices', path: '/invoices', icon: DocumentDuplicateIcon },
+        { key: 'menu.projects', path: '/projects', icon: BriefcaseIcon },
+        { key: 'menu.assets', path: '/assets', icon: BuildingOfficeIcon },
+        { key: 'menu.budgets', path: '/budgets', icon: ChartBarIcon },
+        { key: 'menu.reconciliation', path: '/reconciliation', icon: ScaleIcon },
         { key: 'menu.sales', path: '/sales', icon: ShoppingCartIcon },
         { key: 'menu.purchases', path: '/purchases', icon: BanknotesIcon },
         { key: 'menu.inventory', path: '/inventory', icon: CubeIcon },
-        { key: 'menu.contacts', path: '/contacts', icon: UsersIcon },
+        { key: 'menu.reports', path: '/reports', icon: ChartPieIcon },
         { key: 'menu.settings', path: '/settings', icon: CogIcon },
     ];
 
@@ -57,8 +69,8 @@ const Sidebar = () => {
                                 whileHover={{ x: language === 'ur' ? -5 : 5, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
                                 whileTap={{ scale: 0.98 }}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${isActive
-                                        ? `bg-gradient-to-${language === 'ur' ? 'l' : 'r'} from-gold/20 to-transparent ${language === 'ur' ? 'border-r-2' : 'border-l-2'} border-gold`
-                                        : 'hover:bg-white/5'
+                                    ? `bg-gradient-to-${language === 'ur' ? 'l' : 'r'} from-gold/20 to-transparent ${language === 'ur' ? 'border-r-2' : 'border-l-2'} border-gold`
+                                    : 'hover:bg-white/5'
                                     }`}
                             >
                                 <Icon className={`w-5 h-5 ${isActive ? 'text-gold' : 'text-silver'}`} />

@@ -6,7 +6,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { authAPI } from '../services/api';
 
 const Register = () => {
-    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,7 +33,7 @@ const Register = () => {
         }
 
         try {
-            await authAPI.register({ username, email, password });
+            await authAPI.register({ email, password, firstName, lastName });
             setSuccess('Registration successful! Redirecting to login...');
             setTimeout(() => {
                 navigate('/login');
@@ -101,26 +102,48 @@ const Register = () => {
 
                         {/* Register Form */}
                         <form onSubmit={handleRegister} className="space-y-6">
-                            <motion.div
-                                initial={{ x: 20, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 0.4 }}
-                            >
-                                <label className="block text-silver text-sm mb-2">
-                                    Username
-                                </label>
-                                <div className="relative">
-                                    <UserIcon className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-silver ${language === 'ur' ? 'right-3' : 'left-3'}`} />
-                                    <input
-                                        type="text"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        className={`input-field w-full ${language === 'ur' ? 'pr-10' : 'pl-10'}`}
-                                        placeholder="Enter username"
-                                        required
-                                    />
-                                </div>
-                            </motion.div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <motion.div
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4 }}
+                                >
+                                    <label className="block text-silver text-sm mb-2">
+                                        First Name
+                                    </label>
+                                    <div className="relative">
+                                        <UserIcon className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-silver ${language === 'ur' ? 'right-3' : 'left-3'}`} />
+                                        <input
+                                            type="text"
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            className={`input-field w-full ${language === 'ur' ? 'pr-10' : 'pl-10'}`}
+                                            placeholder="First Name"
+                                            required
+                                        />
+                                    </div>
+                                </motion.div>
+                                <motion.div
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.45 }}
+                                >
+                                    <label className="block text-silver text-sm mb-2">
+                                        Last Name
+                                    </label>
+                                    <div className="relative">
+                                        <UserIcon className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-silver ${language === 'ur' ? 'right-3' : 'left-3'}`} />
+                                        <input
+                                            type="text"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            className={`input-field w-full ${language === 'ur' ? 'pr-10' : 'pl-10'}`}
+                                            placeholder="Last Name"
+                                            required
+                                        />
+                                    </div>
+                                </motion.div>
+                            </div>
 
                             <motion.div
                                 initial={{ x: 20, opacity: 0 }}

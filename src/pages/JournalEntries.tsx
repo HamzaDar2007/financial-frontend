@@ -2,21 +2,18 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { journalEntriesAPI } from '../services/api';
 
 const JournalEntries = () => {
     const { t } = useLanguage();
-    const { user } = useAuth();
     const [entries, setEntries] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchEntries = async () => {
-            if (!user?.defaultCompanyId) return;
             try {
-                const response = await financialAPI.getJournalEntries(user.defaultCompanyId);
+                const response = await journalEntriesAPI.getAll();
                 setEntries(response.data);
             } catch (err) {
                 console.error('Failed to fetch journal entries:', err);
@@ -27,7 +24,7 @@ const JournalEntries = () => {
         };
 
         fetchEntries();
-    }, [user]);
+    }, []);
 
     return (
         <div className="space-y-6">

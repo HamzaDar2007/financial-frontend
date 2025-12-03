@@ -2,21 +2,19 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { purchasesAPI } from '../services/api';
+import { invoicesAPI } from '../services/api';
 
 const Purchases = () => {
     const { t } = useLanguage();
-    const { user } = useAuth();
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchOrders = async () => {
-            if (!user?.defaultCompanyId) return;
             try {
-                const response = await purchasesAPI.getPurchaseOrders(user.defaultCompanyId);
+                // Fetch purchase invoices
+                const response = await invoicesAPI.getAll({ type: 'purchase' });
                 setOrders(response.data);
             } catch (err) {
                 console.error('Failed to fetch purchase orders:', err);
@@ -27,7 +25,7 @@ const Purchases = () => {
         };
 
         fetchOrders();
-    }, [user]);
+    }, []);
 
     return (
         <div className="space-y-6">

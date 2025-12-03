@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { accountsAPI } from '../services/api';
 
 interface Account {
     id: string;
@@ -127,13 +127,8 @@ const ChartOfAccounts = () => {
 
     useEffect(() => {
         const fetchAccounts = async () => {
-            if (!user?.defaultCompanyId) {
-                setLoading(false);
-                return;
-            }
-
             try {
-                const response = await financialAPI.getAccounts(user.defaultCompanyId);
+                const response = await accountsAPI.getAll();
                 const flatAccounts = response.data;
                 const tree = buildAccountTree(flatAccounts);
                 setAccounts(tree);
