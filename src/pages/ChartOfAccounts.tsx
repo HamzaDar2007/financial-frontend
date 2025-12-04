@@ -10,19 +10,32 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { accountsAPI } from '../services/api';
+import AccountForm from './accounts/AccountForm';
 
 interface Account {
     id: string;
+    code?: string;
     accountName: string;
-    accountNameEn?: string; // Optional if backend doesn't provide it yet
+    accountNameEn?: string;
     accountType: string;
     parentAccountId?: string;
     children?: Account[];
     balance?: number;
+    description?: string;
 }
 
-const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }) => {
+const AccountRow = ({
+    account,
+    level = 0,
+    onEdit,
+    onDelete
+}: {
+    account: Account;
+    level?: number;
+    onEdit: (account: Account) => void;
+    onDelete: (id: string) => void;
+}) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const { t, language } = useLanguage();
     const hasChildren = account.children && account.children.length > 0;
@@ -46,7 +59,7 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.02)' }}
-                className="flex items-center gap-4 p-4 border-b border-white/[0.05] cursor-pointer"
+                className="flex items-center gap-4 p-4 border-b border-white/[0.05] cursor-pointer group"
                 style={{ [language === 'ur' ? 'paddingRight' : 'paddingLeft']: `${level * 2 + 1}rem` }}
             >
                 {/* Expand/Collapse Button */}
@@ -67,14 +80,17 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
 
                 {/* Account Name */}
                 <div className="flex-1">
-                    <p className="text-white font-medium">{account.accountName}</p>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gold font-mono text-xs">{account.code}</span>
+                        <p className="text-white font-medium">{account.accountName}</p>
+                    </div>
                     {account.accountNameEn && (
                         <p className="text-silver text-xs">{account.accountNameEn}</p>
                     )}
                 </div>
 
                 {/* Account Type */}
-                <span className={`text-sm ${getTypeColor(account.accountType)}`}>
+                <span className={`text-sm ${getTypeColor(account.accountType)} w-24`}>
                     {account.accountType}
                 </span>
 
@@ -84,10 +100,11 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                 </span>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-24 opacity-0 group-hover:opacity-100 transition-opacity">
                     <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={() => onEdit(account)}
                         className="p-2 rounded-lg hover:bg-gold/10 transition-colors"
                     >
                         <PencilIcon className="w-4 h-4 text-gold" />
@@ -95,6 +112,7 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                     <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={() => onDelete(account.id)}
                         className="p-2 rounded-lg hover:bg-ruby/10 transition-colors"
                     >
                         <TrashIcon className="w-4 h-4 text-ruby" />
@@ -110,7 +128,13 @@ const AccountRow = ({ account, level = 0 }: { account: Account; level?: number }
                     exit={{ opacity: 0, height: 0 }}
                 >
                     {account.children!.map((child) => (
-                        <AccountRow key={child.id} account={child} level={level + 1} />
+                        <AccountRow
+                            key={child.id}
+                            account={child}
+                            level={level + 1}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
                     ))}
                 </motion.div>
             )}
@@ -124,29 +148,26 @@ const ChartOfAccounts = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(undefined);
 
     useEffect(() => {
-        const fetchAccounts = async () => {
-            if (!user?.defaultCompanyId) {
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const response = await financialAPI.getAccounts(user.defaultCompanyId);
-                const flatAccounts = response.data;
-                const tree = buildAccountTree(flatAccounts);
-                setAccounts(tree);
-            } catch (err) {
-                console.error('Failed to fetch accounts:', err);
-                setError('Failed to load accounts.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchAccounts();
     }, [user]);
+
+    const fetchAccounts = async () => {
+        try {
+            const response = await accountsAPI.getAll();
+            const flatAccounts = response.data;
+            const tree = buildAccountTree(flatAccounts);
+            setAccounts(tree);
+        } catch (err) {
+            console.error('Failed to fetch accounts:', err);
+            setError('Failed to load accounts.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const buildAccountTree = (flatList: any[]): Account[] => {
         const map = new Map<string, Account>();
@@ -170,6 +191,33 @@ const ChartOfAccounts = () => {
         return roots;
     };
 
+    const handleCreate = () => {
+        setSelectedAccount(undefined);
+        setIsModalOpen(true);
+    };
+
+    const handleEdit = (account: Account) => {
+        setSelectedAccount(account);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this account?')) return;
+
+        try {
+            await accountsAPI.delete(id);
+            fetchAccounts();
+        } catch (err) {
+            console.error('Failed to delete account:', err);
+            alert('Failed to delete account. It may have associated transactions.');
+        }
+    };
+
+    const handleSuccess = () => {
+        fetchAccounts();
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="space-y-6">
             {/* Page Header */}
@@ -181,6 +229,7 @@ const ChartOfAccounts = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleCreate}
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -216,7 +265,12 @@ const ChartOfAccounts = () => {
                         <div className="p-8 text-center text-silver">Loading accounts...</div>
                     ) : accounts.length > 0 ? (
                         accounts.map((account) => (
-                            <AccountRow key={account.id} account={account} />
+                            <AccountRow
+                                key={account.id}
+                                account={account}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
                         ))
                     ) : (
                         <div className="p-8 text-center text-silver">No accounts found.</div>
@@ -239,6 +293,13 @@ const ChartOfAccounts = () => {
                     <span className="text-silver">{t('accounts.equity')}</span>
                 </div>
             </div>
+
+            <AccountForm
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={handleSuccess}
+                account={selectedAccount}
+            />
         </div>
     );
 };

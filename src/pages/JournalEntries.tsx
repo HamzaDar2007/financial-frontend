@@ -1,33 +1,48 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { journalEntriesAPI } from '../services/api';
+import JournalEntryForm from './journal/JournalEntryForm';
 
 const JournalEntries = () => {
     const { t } = useLanguage();
-    const { user } = useAuth();
     const [entries, setEntries] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedEntry, setSelectedEntry] = useState<any | undefined>(undefined);
 
     useEffect(() => {
-        const fetchEntries = async () => {
-            if (!user?.defaultCompanyId) return;
-            try {
-                const response = await financialAPI.getJournalEntries(user.defaultCompanyId);
-                setEntries(response.data);
-            } catch (err) {
-                console.error('Failed to fetch journal entries:', err);
-                setError('Failed to load journal entries.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchEntries();
-    }, [user]);
+    }, []);
+
+    const fetchEntries = async () => {
+        try {
+            const response = await journalEntriesAPI.getAll();
+            setEntries(response.data);
+        } catch (err) {
+            console.error('Failed to fetch journal entries:', err);
+            setError('Failed to load journal entries.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreate = () => {
+        setSelectedEntry(undefined);
+        setIsModalOpen(true);
+    };
+
+    const handleView = (entry: any) => {
+        setSelectedEntry(entry);
+        setIsModalOpen(true);
+    };
+
+    const handleSuccess = () => {
+        fetchEntries();
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="space-y-6">
@@ -39,6 +54,7 @@ const JournalEntries = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleCreate}
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -62,6 +78,7 @@ const JournalEntries = () => {
                     <div className="text-silver text-sm font-medium w-32">Reference</div>
                     <div className="text-silver text-sm font-medium w-32">Date</div>
                     <div className="text-silver text-sm font-medium w-32">Amount</div>
+                    <div className="text-silver text-sm font-medium w-20 text-right">Actions</div>
                 </div>
 
                 <div>
@@ -69,11 +86,20 @@ const JournalEntries = () => {
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : entries.length > 0 ? (
                         entries.map((entry: any) => (
-                            <div key={entry.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
+                            <div key={entry.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] group">
                                 <div className="flex-1 text-white">{entry.description}</div>
                                 <div className="text-silver text-sm w-32">{entry.reference}</div>
                                 <div className="text-silver text-sm w-32">{new Date(entry.date).toLocaleDateString()}</div>
                                 <div className="text-white font-mono w-32">{entry.totalAmount} {t('currency')}</div>
+                                <div className="w-20 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={() => handleView(entry)}
+                                        className="p-2 text-silver hover:text-white hover:bg-white/10 rounded-full"
+                                        title="View Details"
+                                    >
+                                        <EyeIcon className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                         ))
                     ) : (
@@ -81,6 +107,13 @@ const JournalEntries = () => {
                     )}
                 </div>
             </motion.div>
+
+            <JournalEntryForm
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={handleSuccess}
+                entry={selectedEntry}
+            />
         </div>
     );
 };

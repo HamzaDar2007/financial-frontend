@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { financialAPI } from '../services/api';
+import { journalEntriesAPI } from '../services/api';
 
 const Dashboard = () => {
     const { t } = useLanguage();
@@ -18,11 +18,9 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!user?.defaultCompanyId) return;
-
             try {
                 // Fetch recent journal entries
-                const journalRes = await financialAPI.getJournalEntries(user.defaultCompanyId);
+                const journalRes = await journalEntriesAPI.getAll();
                 // Take last 5 entries
                 setTransactions(journalRes.data.slice(0, 5));
             } catch (err) {

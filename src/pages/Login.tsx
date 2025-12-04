@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { LockClosedIcon, UserIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,6 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate();
     const { t, language } = useLanguage();
     const { login } = useAuth();
 
@@ -19,9 +18,10 @@ const Login = () => {
         setError('');
         try {
             const response = await authAPI.login({ email, password });
-            const { accessToken, user } = response.data;
-            login(accessToken, user);
-            navigate('/');
+            const { access_token, user } = response.data;
+            login(access_token, user);
+            // Force a full page reload to ensure auth state is recognized
+            window.location.href = '/';
         } catch (err: any) {
             console.error('Login failed:', err);
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');

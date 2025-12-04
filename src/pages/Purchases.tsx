@@ -1,33 +1,50 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import { purchasesAPI } from '../services/api';
+import { invoicesAPI } from '../services/api';
+import InvoiceForm from './invoices/InvoiceForm';
 
 const Purchases = () => {
     const { t } = useLanguage();
-    const { user } = useAuth();
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState<any | undefined>(undefined);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            if (!user?.defaultCompanyId) return;
-            try {
-                const response = await purchasesAPI.getPurchaseOrders(user.defaultCompanyId);
-                setOrders(response.data);
-            } catch (err) {
-                console.error('Failed to fetch purchase orders:', err);
-                setError('Failed to load purchase orders.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchOrders();
-    }, [user]);
+    }, []);
+
+    const fetchOrders = async () => {
+        try {
+            // Fetch purchase invoices
+            const response = await invoicesAPI.getAll({ type: 'purchase' });
+            setOrders(response.data);
+        } catch (err) {
+            console.error('Failed to fetch purchase orders:', err);
+            setError('Failed to load purchase orders.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreate = () => {
+        // Create a new purchase invoice with type pre-set
+        setSelectedOrder({ invoiceType: 'PURCHASE' });
+        setIsModalOpen(true);
+    };
+
+    const handleEdit = (order: any) => {
+        setSelectedOrder(order);
+        setIsModalOpen(true);
+    };
+
+    const handleSuccess = () => {
+        fetchOrders();
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="space-y-6">
@@ -39,6 +56,7 @@ const Purchases = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleCreate}
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -63,6 +81,7 @@ const Purchases = () => {
                     <div className="text-silver text-sm font-medium w-32">Date</div>
                     <div className="text-silver text-sm font-medium w-32">Total</div>
                     <div className="text-silver text-sm font-medium w-32">Status</div>
+                    <div className="text-silver text-sm font-medium w-20 text-right">Actions</div>
                 </div>
 
                 <div>
@@ -70,12 +89,22 @@ const Purchases = () => {
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : orders.length > 0 ? (
                         orders.map((order: any) => (
-                            <div key={order.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
+                            <div key={order.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] group">
                                 <div className="flex-1 text-white">{order.orderNumber}</div>
                                 <div className="text-silver text-sm w-32">{order.vendorName || 'N/A'}</div>
                                 <div className="text-silver text-sm w-32">{new Date(order.orderDate).toLocaleDateString()}</div>
                                 <div className="text-white font-mono w-32">{order.totalAmount} {t('currency')}</div>
                                 <div className="text-silver text-sm w-32">{order.status}</div>
+                                <div className="w-20 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => handleEdit(order)}
+                                        className="p-2 rounded-lg hover:bg-gold/10 transition-colors"
+                                    >
+                                        <PencilIcon className="w-4 h-4 text-gold" />
+                                    </motion.button>
+                                </div>
                             </div>
                         ))
                     ) : (
@@ -83,6 +112,13 @@ const Purchases = () => {
                     )}
                 </div>
             </motion.div>
+
+            <InvoiceForm
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={handleSuccess}
+                invoice={selectedOrder}
+            />
         </div>
     );
 };
