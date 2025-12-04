@@ -8,12 +8,17 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { journalEntriesAPI } from '../services/api';
+=======
+import { journalEntriesAPI, financialAPI } from '../services/api';
+import type { JournalEntry } from '../types';
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 const Dashboard = () => {
     const { t } = useLanguage();
     const { user } = useAuth();
-    const [transactions, setTransactions] = useState<any[]>([]);
+    const [transactions, setTransactions] = useState<JournalEntry[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,10 +38,15 @@ const Dashboard = () => {
         fetchData();
     }, [user]);
 
+    const calculateTotal = (entry: JournalEntry) => {
+        // Sum of debits (should equal sum of credits)
+        return entry.lines.reduce((sum, line) => sum + Number(line.debit), 0);
+    };
+
     const stats = [
         {
             title: t('stats.assets'),
-            value: '1,250,000', // Still mock for now as we need complex calculation
+            value: '1,250,000', // TODO: Fetch real stats from backend when available
             currency: t('currency'),
             change: '+12.5%',
             isPositive: true,
@@ -144,9 +154,9 @@ const Dashboard = () => {
                                 </div>
                                 <div className="text-left">
                                     <p className="text-lg font-medium text-white">
-                                        {transaction.totalAmount} {t('currency')}
+                                        {calculateTotal(transaction).toLocaleString()} {t('currency')}
                                     </p>
-                                    <p className="text-silver text-xs">{new Date(transaction.date).toLocaleDateString()}</p>
+                                    <p className="text-silver text-xs">{new Date(transaction.entryDate).toLocaleDateString()}</p>
                                 </div>
                             </motion.div>
                         ))

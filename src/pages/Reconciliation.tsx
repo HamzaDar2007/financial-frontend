@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { PlusIcon, CheckCircleIcon, XCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { reconciliationsAPI } from '../services/api';
 import ReconciliationForm from './reconciliation/ReconciliationForm';
+=======
+import { PlusIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { reconciliationsAPI } from '../services/api';
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 interface Reconciliation {
     id: string;
@@ -18,8 +23,11 @@ const Reconciliation = () => {
     const [reconciliations, setReconciliations] = useState<Reconciliation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+<<<<<<< HEAD
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedReconciliation, setSelectedReconciliation] = useState<Reconciliation | undefined>(undefined);
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     useEffect(() => {
         fetchReconciliations();
@@ -37,6 +45,7 @@ const Reconciliation = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleCreate = () => {
         setSelectedReconciliation(undefined);
         setIsModalOpen(true);
@@ -52,6 +61,8 @@ const Reconciliation = () => {
         setIsModalOpen(false);
     };
 
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -62,7 +73,10 @@ const Reconciliation = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                     onClick={handleCreate}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -77,14 +91,21 @@ const Reconciliation = () => {
             )}
 
             <div className="card p-0 overflow-hidden">
+<<<<<<< HEAD
                 <div className="grid grid-cols-7 gap-4 p-4 border-b border-white/[0.08] bg-charcoal/50 text-silver text-sm font-medium">
+=======
+                <div className="grid grid-cols-6 gap-4 p-4 border-b border-white/[0.08] bg-charcoal/50 text-silver text-sm font-medium">
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     <div className="col-span-1">Date</div>
                     <div className="col-span-1">Account</div>
                     <div className="col-span-1">Statement Bal.</div>
                     <div className="col-span-1">Book Bal.</div>
                     <div className="col-span-1">Difference</div>
                     <div className="col-span-1">Status</div>
+<<<<<<< HEAD
                     <div className="col-span-1 text-right">Actions</div>
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                 </div>
 
                 <div>
@@ -97,7 +118,11 @@ const Reconciliation = () => {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: index * 0.05 }}
+<<<<<<< HEAD
                                 className="grid grid-cols-7 gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] items-center group"
+=======
+                                className="grid grid-cols-6 gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] items-center"
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                             >
                                 <div className="col-span-1 text-white">{new Date(rec.statementDate).toLocaleDateString()}</div>
                                 <div className="col-span-1 text-silver">Bank Account</div>
@@ -117,6 +142,7 @@ const Reconciliation = () => {
                                         </span>
                                     )}
                                 </div>
+<<<<<<< HEAD
                                 <div className="col-span-1 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
                                         onClick={() => handleView(rec)}
@@ -126,6 +152,8 @@ const Reconciliation = () => {
                                         <EyeIcon className="w-4 h-4" />
                                     </button>
                                 </div>
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                             </motion.div>
                         ))
                     ) : (
@@ -133,6 +161,7 @@ const Reconciliation = () => {
                     )}
                 </div>
             </div>
+<<<<<<< HEAD
 
             <ReconciliationForm
                 isOpen={isModalOpen}
@@ -140,6 +169,8 @@ const Reconciliation = () => {
                 onSuccess={handleSuccess}
                 reconciliation={selectedReconciliation}
             />
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         </div>
     );
 };

@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { PlusIcon, BuildingOfficeIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { fixedAssetsAPI } from '../services/api';
 import FixedAssetForm from './fixed-assets/FixedAssetForm';
+=======
+import { PlusIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { fixedAssetsAPI } from '../services/api';
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 interface FixedAsset {
     id: string;
@@ -19,8 +24,11 @@ const FixedAssets = () => {
     const [assets, setAssets] = useState<FixedAsset[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+<<<<<<< HEAD
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState<FixedAsset | undefined>(undefined);
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     useEffect(() => {
         fetchAssets();
@@ -38,6 +46,7 @@ const FixedAssets = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleCreate = () => {
         setSelectedAsset(undefined);
         setIsModalOpen(true);
@@ -53,6 +62,8 @@ const FixedAssets = () => {
         setIsModalOpen(false);
     };
 
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -63,7 +74,10 @@ const FixedAssets = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                     onClick={handleCreate}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -78,13 +92,20 @@ const FixedAssets = () => {
             )}
 
             <div className="card p-0 overflow-hidden">
+<<<<<<< HEAD
                 <div className="grid grid-cols-7 gap-4 p-4 border-b border-white/[0.08] bg-charcoal/50 text-silver text-sm font-medium">
+=======
+                <div className="grid grid-cols-6 gap-4 p-4 border-b border-white/[0.08] bg-charcoal/50 text-silver text-sm font-medium">
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     <div className="col-span-1">Code</div>
                     <div className="col-span-2">Asset Name</div>
                     <div className="col-span-1">Type</div>
                     <div className="col-span-1">Purchase Price</div>
                     <div className="col-span-1">Book Value</div>
+<<<<<<< HEAD
                     <div className="col-span-1 text-right">Actions</div>
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                 </div>
 
                 <div>
@@ -97,7 +118,11 @@ const FixedAssets = () => {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: index * 0.05 }}
+<<<<<<< HEAD
                                 className="grid grid-cols-7 gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] items-center group"
+=======
+                                className="grid grid-cols-6 gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] items-center"
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                             >
                                 <div className="col-span-1 text-gold font-mono">{asset.code}</div>
                                 <div className="col-span-2 text-white font-medium flex items-center gap-3">
@@ -106,6 +131,7 @@ const FixedAssets = () => {
                                     </div>
                                     {asset.name}
                                 </div>
+<<<<<<< HEAD
                                 <div className="col-span-1 text-silver capitalize">{asset.assetType || 'Fixed Asset'}</div>
                                 <div className="col-span-1 text-white font-mono">${asset.purchasePrice.toLocaleString()}</div>
                                 <div className="col-span-1 text-emerald font-mono">${asset.bookValue?.toLocaleString() || asset.purchasePrice.toLocaleString()}</div>
@@ -117,6 +143,11 @@ const FixedAssets = () => {
                                         <PencilSquareIcon className="w-4 h-4" />
                                     </button>
                                 </div>
+=======
+                                <div className="col-span-1 text-silver capitalize">{asset.assetType}</div>
+                                <div className="col-span-1 text-white font-mono">${asset.purchasePrice.toLocaleString()}</div>
+                                <div className="col-span-1 text-emerald font-mono">${asset.bookValue?.toLocaleString() || asset.purchasePrice.toLocaleString()}</div>
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                             </motion.div>
                         ))
                     ) : (
@@ -124,6 +155,7 @@ const FixedAssets = () => {
                     )}
                 </div>
             </div>
+<<<<<<< HEAD
 
             <FixedAssetForm
                 isOpen={isModalOpen}
@@ -131,6 +163,8 @@ const FixedAssets = () => {
                 onSuccess={handleSuccess}
                 asset={selectedAsset}
             />
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         </div>
     );
 };

@@ -5,11 +5,17 @@ import {
     DocumentTextIcon,
     ArrowDownTrayIcon,
     CheckCircleIcon,
+<<<<<<< HEAD
     ClockIcon,
     PencilSquareIcon
 } from '@heroicons/react/24/outline';
 import { invoicesAPI } from '../services/api';
 import InvoiceForm from './invoices/InvoiceForm';
+=======
+    ClockIcon
+} from '@heroicons/react/24/outline';
+import { invoicesAPI } from '../services/api';
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 interface Invoice {
     id: string;
@@ -29,8 +35,11 @@ const Invoices = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [filter, setFilter] = useState<'all' | 'sales' | 'purchase'>('all');
+<<<<<<< HEAD
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     useEffect(() => {
         fetchInvoices();
@@ -49,6 +58,7 @@ const Invoices = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleCreate = () => {
         setSelectedInvoice(undefined);
         setIsModalOpen(true);
@@ -64,6 +74,8 @@ const Invoices = () => {
         setIsModalOpen(false);
     };
 
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     const handleDownloadPDF = async (id: string) => {
         try {
             const response = await invoicesAPI.getPDF(id);
@@ -109,7 +121,10 @@ const Invoices = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                     onClick={handleCreate}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -155,6 +170,7 @@ const Invoices = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
                                 whileHover={{ y: -5 }}
+<<<<<<< HEAD
                                 className="card group relative"
                             >
                                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -166,6 +182,10 @@ const Invoices = () => {
                                     </button>
                                 </div>
 
+=======
+                                className="card group cursor-pointer"
+                            >
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div>
@@ -241,7 +261,11 @@ const Invoices = () => {
                                 </div>
 
                                 {/* Type Badge */}
+<<<<<<< HEAD
                                 <div className="absolute bottom-4 right-4 opacity-20 group-hover:opacity-100 transition-opacity pointer-events-none">
+=======
+                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                                     <span className={`px-2 py-1 rounded text-xs ${invoice.type === 'sales'
                                         ? 'bg-emerald/20 text-emerald'
                                         : 'bg-blue-500/20 text-blue-400'
@@ -253,6 +277,7 @@ const Invoices = () => {
                         );
                     })
                 ) : (
+<<<<<<< HEAD
                     <div className="col-span-full p-8 text-center text-silver">No invoices found. Click "Create Invoice" to add one.</div>
                 )}
             </div>
@@ -263,6 +288,11 @@ const Invoices = () => {
                 onSuccess={handleSuccess}
                 invoice={selectedInvoice}
             />
+=======
+                    <div className="col-span-full p-8 text-center text-silver">No invoices found.</div>
+                )}
+            </div>
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         </div>
     );
 };

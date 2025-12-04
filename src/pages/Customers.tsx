@@ -2,7 +2,10 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { customersAPI } from '../services/api';
+<<<<<<< HEAD
 import CustomerForm from './customers/CustomerForm';
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 interface Customer {
     id: string;
@@ -22,8 +25,11 @@ const Customers = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showWithBalance, setShowWithBalance] = useState(false);
+<<<<<<< HEAD
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined);
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     useEffect(() => {
         fetchCustomers();
@@ -55,6 +61,7 @@ const Customers = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleCreate = () => {
         setSelectedCustomer(undefined);
         setIsModalOpen(true);
@@ -70,6 +77,8 @@ const Customers = () => {
         setIsModalOpen(false);
     };
 
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     return (
         <div className="space-y-6">
             {/* Page Header */}
@@ -81,7 +90,10 @@ const Customers = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                     onClick={handleCreate}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -158,7 +170,10 @@ const Customers = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                                         onClick={() => handleEdit(customer)}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                                         className="p-2 rounded-lg hover:bg-gold/10 transition-colors"
                                     >
                                         <PencilIcon className="w-4 h-4 text-gold" />
@@ -185,6 +200,7 @@ const Customers = () => {
                     )}
                 </div>
             </motion.div>
+<<<<<<< HEAD
 
             <CustomerForm
                 isOpen={isModalOpen}
@@ -192,6 +208,8 @@ const Customers = () => {
                 onSuccess={handleSuccess}
                 customer={selectedCustomer}
             />
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         </div>
     );
 };

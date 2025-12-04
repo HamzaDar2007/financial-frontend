@@ -3,7 +3,10 @@ import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { invoicesAPI } from '../services/api';
+<<<<<<< HEAD
 import InvoiceForm from './invoices/InvoiceForm';
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 const Purchases = () => {
     const { t } = useLanguage();
@@ -14,6 +17,7 @@ const Purchases = () => {
     const [selectedOrder, setSelectedOrder] = useState<any | undefined>(undefined);
 
     useEffect(() => {
+<<<<<<< HEAD
         fetchOrders();
     }, []);
 
@@ -45,6 +49,23 @@ const Purchases = () => {
         fetchOrders();
         setIsModalOpen(false);
     };
+=======
+        const fetchOrders = async () => {
+            try {
+                // Fetch purchase invoices
+                const response = await invoicesAPI.getAll({ type: 'purchase' });
+                setOrders(response.data);
+            } catch (err) {
+                console.error('Failed to fetch purchase orders:', err);
+                setError('Failed to load purchase orders.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, []);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     return (
         <div className="space-y-6">

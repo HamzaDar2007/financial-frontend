@@ -2,18 +2,30 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
+<<<<<<< HEAD
 import { invoicesAPI } from '../services/api';
 import InvoiceForm from './invoices/InvoiceForm';
 
 const Sales = () => {
     const { t } = useLanguage();
     const [orders, setOrders] = useState<any[]>([]);
+=======
+import { useAuth } from '../context/AuthContext';
+import { salesAPI, invoicesAPI } from '../services/api';
+import type { SalesOrder } from '../types';
+
+const Sales = () => {
+    const { t } = useLanguage();
+    const { user } = useAuth();
+    const [orders, setOrders] = useState<SalesOrder[]>([]);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<any | undefined>(undefined);
 
     useEffect(() => {
+<<<<<<< HEAD
         fetchOrders();
     }, []);
 
@@ -45,6 +57,23 @@ const Sales = () => {
         fetchOrders();
         setIsModalOpen(false);
     };
+=======
+        const fetchOrders = async () => {
+            try {
+                // Fetch sales invoices
+                const response = await invoicesAPI.getAll({ type: 'sales' });
+                setOrders(response.data);
+            } catch (err) {
+                console.error('Failed to fetch sales orders:', err);
+                setError('Failed to load sales orders.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, []);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     return (
         <div className="space-y-6">
@@ -88,10 +117,15 @@ const Sales = () => {
                     {loading ? (
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : orders.length > 0 ? (
+<<<<<<< HEAD
                         orders.map((order: any) => (
                             <div key={order.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] group">
+=======
+                        orders.map((order) => (
+                            <div key={order.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                                 <div className="flex-1 text-white">{order.orderNumber}</div>
-                                <div className="text-silver text-sm w-32">{order.customerName || 'N/A'}</div>
+                                <div className="text-silver text-sm w-32">{order.customer?.name || 'N/A'}</div>
                                 <div className="text-silver text-sm w-32">{new Date(order.orderDate).toLocaleDateString()}</div>
                                 <div className="text-white font-mono w-32">{order.totalAmount} {t('currency')}</div>
                                 <div className="text-silver text-sm w-32">{order.status}</div>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { Account, JournalEntry, Company, User } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
@@ -40,9 +41,10 @@ apiClient.interceptors.response.use(
 // ==================== AUTH API ====================
 export const authAPI = {
     login: (credentials: { email: string; password: string }) =>
-        apiClient.post('/auth/login', credentials),
+        apiClient.post<{ accessToken: string; user: User }>('/auth/login', credentials),
 
     register: (data: { email: string; password: string; firstName: string; lastName: string }) =>
+<<<<<<< HEAD
         apiClient.post('/auth/register', data),
 
     getProfile: () =>
@@ -53,6 +55,97 @@ export const authAPI = {
 export const companiesAPI = {
     getAll: () =>
         apiClient.get('/companies'),
+=======
+        apiClient.post<User>('/auth/register', data),
+
+    getProfile: () =>
+        apiClient.get<User>('/auth/profile'),
+
+    toggle2FA: () =>
+        apiClient.patch('/auth/2fa'),
+};
+
+// Financial API
+export const financialAPI = {
+    // Accounts
+    getAccounts: (companyId: string) =>
+        apiClient.get<Account[]>(`/accounts?companyId=${companyId}`),
+
+    createAccount: (data: Partial<Account>) =>
+        apiClient.post<Account>('/accounts', data),
+
+    updateAccount: (id: string, data: Partial<Account>) =>
+        apiClient.patch<Account>(`/accounts/${id}`, data),
+
+    deleteAccount: (id: string) =>
+        apiClient.delete<void>(`/accounts/${id}`),
+
+    // Journal Entries
+    getJournalEntries: (companyId: string) =>
+        apiClient.get<JournalEntry[]>(`/journal?companyId=${companyId}`),
+
+    createJournalEntry: (data: any) =>
+        apiClient.post<JournalEntry>('/journal', data),
+
+    // Currencies
+    getCurrencies: () =>
+        apiClient.get('/financial/currencies'),
+
+    // Exchange Rates
+    getExchangeRates: () =>
+        apiClient.get('/financial/exchange-rates'),
+};
+
+// Sales API
+export const salesAPI = {
+    getSalesOrders: (companyId: string) =>
+        apiClient.get<SalesOrder[]>(`/sales-orders/${companyId}`),
+
+    createSalesOrder: (data: any) =>
+        apiClient.post('/sales-orders', data),
+
+    getInvoices: () =>
+        apiClient.get('/invoices'),
+
+    createInvoice: (data: any) =>
+        apiClient.post('/invoices', data),
+
+    getPayments: () =>
+        apiClient.get('/payments'),
+
+    createPayment: (data: any) =>
+        apiClient.post('/payments', data),
+};
+
+// Purchases API
+export const purchasesAPI = {
+    getPurchaseOrders: (companyId: string) =>
+        apiClient.get(`/purchase-orders/company/${companyId}`),
+
+    createPurchaseOrder: (data: any) =>
+        apiClient.post('/purchase-orders', data),
+};
+
+// Inventory API
+export const inventoryAPI = {
+    getProducts: (companyId: string) =>
+        apiClient.get(`/products?companyId=${companyId}`),
+
+    createProduct: (data: any) =>
+        apiClient.post('/products', data),
+
+    getWarehouses: () =>
+        apiClient.get('/warehouses'),
+
+    getUnitsOfMeasure: () =>
+        apiClient.get('/uom'),
+};
+
+// ==================== COMPANIES API ====================
+export const companiesAPI = {
+    getAll: () =>
+        apiClient.get<Company[]>('/companies'),
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     getById: (id: string) =>
         apiClient.get(`/companies/${id}`),
@@ -320,6 +413,7 @@ export const reportsAPI = {
 export const reconciliationsAPI = {
     getAll: () =>
         apiClient.get('/reconciliations'),
+<<<<<<< HEAD
 
     getById: (id: string) =>
         apiClient.get(`/reconciliations/${id}`),
@@ -417,6 +511,105 @@ export const usersAPI = {
     update: (id: string, data: any) =>
         apiClient.patch(`/users/${id}`, data),
 
+=======
+
+    getById: (id: string) =>
+        apiClient.get(`/reconciliations/${id}`),
+
+    create: (data: any) =>
+        apiClient.post('/reconciliations', data),
+
+    update: (id: string, data: any) =>
+        apiClient.patch(`/reconciliations/${id}`, data),
+
+    delete: (id: string) =>
+        apiClient.delete(`/reconciliations/${id}`),
+};
+
+// ==================== FIXED ASSETS API ====================
+export const fixedAssetsAPI = {
+    getAll: () =>
+        apiClient.get('/fixed-assets'),
+
+    getById: (id: string) =>
+        apiClient.get(`/fixed-assets/${id}`),
+
+    create: (data: any) =>
+        apiClient.post('/fixed-assets', data),
+
+    depreciate: (id: string, data: { depreciationDate: string }) =>
+        apiClient.post(`/fixed-assets/${id}/depreciate`, data),
+
+    update: (id: string, data: any) =>
+        apiClient.patch(`/fixed-assets/${id}`, data),
+
+    delete: (id: string) =>
+        apiClient.delete(`/fixed-assets/${id}`),
+};
+
+// ==================== CURRENCIES API ====================
+export const currenciesAPI = {
+    getAll: () =>
+        apiClient.get('/currencies'),
+
+    getExchangeRate: (params: { from: string; to: string; date: string }) =>
+        apiClient.get('/currencies/exchange-rate', { params }),
+
+    create: (data: any) =>
+        apiClient.post('/currencies', data),
+
+    update: (id: string, data: any) =>
+        apiClient.patch(`/currencies/${id}`, data),
+
+    delete: (id: string) =>
+        apiClient.delete(`/currencies/${id}`),
+};
+
+// ==================== BUDGETS API ====================
+export const budgetsAPI = {
+    getAll: () =>
+        apiClient.get('/budgets'),
+
+    getById: (id: string) =>
+        apiClient.get(`/budgets/${id}`),
+
+    getVariance: (id: string) =>
+        apiClient.get(`/budgets/${id}/variance`),
+
+    create: (data: any) =>
+        apiClient.post('/budgets', data),
+
+    update: (id: string, data: any) =>
+        apiClient.patch(`/budgets/${id}`, data),
+
+    delete: (id: string) =>
+        apiClient.delete(`/budgets/${id}`),
+};
+
+// ==================== BALANCES API ====================
+export const balancesAPI = {
+    getAccountBalance: (accountId: string, params?: { asOfDate: string }) =>
+        apiClient.get(`/balances/account/${accountId}`, { params }),
+
+    recalculateAll: () =>
+        apiClient.post('/balances/recalculate'),
+};
+
+// ==================== USERS API ====================
+export const usersAPI = {
+    getAll: () =>
+        apiClient.get<User[]>('/users'),
+
+    getById: (id: string) =>
+        apiClient.get(`/users/${id}`),
+
+    create: (data: any) =>
+        apiClient.post<User>('/users', data),
+
+    update: (id: string, data: any) =>
+        apiClient.patch(`/users/${id}`, data),
+
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     delete: (id: string) =>
         apiClient.delete(`/users/${id}`),
 };

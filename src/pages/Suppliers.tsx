@@ -2,7 +2,10 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { suppliersAPI } from '../services/api';
+<<<<<<< HEAD
 import SupplierForm from './suppliers/SupplierForm';
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 interface Supplier {
     id: string;
@@ -22,8 +25,11 @@ const Suppliers = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showWithBalance, setShowWithBalance] = useState(false);
+<<<<<<< HEAD
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState<Supplier | undefined>(undefined);
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     useEffect(() => {
         fetchSuppliers();
@@ -55,6 +61,7 @@ const Suppliers = () => {
         }
     };
 
+<<<<<<< HEAD
     const handleCreate = () => {
         setSelectedSupplier(undefined);
         setIsModalOpen(true);
@@ -70,6 +77,8 @@ const Suppliers = () => {
         setIsModalOpen(false);
     };
 
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     return (
         <div className="space-y-6">
             {/* Page Header */}
@@ -81,7 +90,10 @@ const Suppliers = () => {
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                     onClick={handleCreate}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                     className="btn-primary flex items-center gap-2"
                 >
                     <PlusIcon className="w-5 h-5" />
@@ -158,7 +170,10 @@ const Suppliers = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
                                         onClick={() => handleEdit(supplier)}
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                                         className="p-2 rounded-lg hover:bg-gold/10 transition-colors"
                                     >
                                         <PencilIcon className="w-4 h-4 text-gold" />
@@ -185,6 +200,7 @@ const Suppliers = () => {
                     )}
                 </div>
             </motion.div>
+<<<<<<< HEAD
 
             <SupplierForm
                 isOpen={isModalOpen}
@@ -192,6 +208,8 @@ const Suppliers = () => {
                 onSuccess={handleSuccess}
                 supplier={selectedSupplier}
             />
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         </div>
     );
 };

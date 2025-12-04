@@ -2,18 +2,30 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { PlusIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
+<<<<<<< HEAD
 import { journalEntriesAPI } from '../services/api';
 import JournalEntryForm from './journal/JournalEntryForm';
 
 const JournalEntries = () => {
     const { t } = useLanguage();
     const [entries, setEntries] = useState<any[]>([]);
+=======
+import { useAuth } from '../context/AuthContext';
+import { journalEntriesAPI, financialAPI } from '../services/api';
+import type { JournalEntry } from '../types';
+
+const JournalEntries = () => {
+    const { t } = useLanguage();
+    const { user } = useAuth();
+    const [entries, setEntries] = useState<JournalEntry[]>([]);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEntry, setSelectedEntry] = useState<any | undefined>(undefined);
 
     useEffect(() => {
+<<<<<<< HEAD
         fetchEntries();
     }, []);
 
@@ -42,6 +54,25 @@ const JournalEntries = () => {
     const handleSuccess = () => {
         fetchEntries();
         setIsModalOpen(false);
+=======
+        const fetchEntries = async () => {
+            try {
+                const response = await journalEntriesAPI.getAll();
+                setEntries(response.data);
+            } catch (err) {
+                console.error('Failed to fetch journal entries:', err);
+                setError('Failed to load journal entries.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEntries();
+    }, []);
+
+    const calculateTotal = (entry: JournalEntry) => {
+        return entry.lines.reduce((sum, line) => sum + Number(line.debit), 0);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
     };
 
     return (
@@ -85,6 +116,7 @@ const JournalEntries = () => {
                     {loading ? (
                         <div className="p-8 text-center text-silver">Loading...</div>
                     ) : entries.length > 0 ? (
+<<<<<<< HEAD
                         entries.map((entry: any) => (
                             <div key={entry.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02] group">
                                 <div className="flex-1 text-white">{entry.description}</div>
@@ -100,6 +132,14 @@ const JournalEntries = () => {
                                         <EyeIcon className="w-4 h-4" />
                                     </button>
                                 </div>
+=======
+                        entries.map((entry) => (
+                            <div key={entry.id} className="flex items-center gap-4 p-4 border-b border-white/[0.05] hover:bg-white/[0.02]">
+                                <div className="flex-1 text-white">{entry.description || 'Journal Entry'}</div>
+                                <div className="text-silver text-sm w-32">{entry.reference || '-'}</div>
+                                <div className="text-silver text-sm w-32">{new Date(entry.entryDate).toLocaleDateString()}</div>
+                                <div className="text-white font-mono w-32">{calculateTotal(entry).toLocaleString()} {t('currency')}</div>
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                             </div>
                         ))
                     ) : (

@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+<<<<<<< HEAD
 import { accountsAPI } from '../services/api';
 import AccountForm from './accounts/AccountForm';
 
@@ -24,6 +25,10 @@ interface Account {
     balance?: number;
     description?: string;
 }
+=======
+import { accountsAPI, financialAPI } from '../services/api';
+import type { Account } from '../types';
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 const AccountRow = ({
     account,
@@ -80,6 +85,7 @@ const AccountRow = ({
 
                 {/* Account Name */}
                 <div className="flex-1">
+<<<<<<< HEAD
                     <div className="flex items-center gap-2">
                         <span className="text-gold font-mono text-xs">{account.code}</span>
                         <p className="text-white font-medium">{account.accountName}</p>
@@ -87,6 +93,9 @@ const AccountRow = ({
                     {account.accountNameEn && (
                         <p className="text-silver text-xs">{account.accountNameEn}</p>
                     )}
+=======
+                    <p className="text-white font-medium">{account.accountName}</p>
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
                 </div>
 
                 {/* Account Type */}
@@ -96,7 +105,8 @@ const AccountRow = ({
 
                 {/* Balance */}
                 <span className="text-white font-mono w-32 text-left">
-                    {account.balance ? account.balance.toLocaleString() : '0'} {t('currency')}
+                    {/* Use initialBalance for now as backend doesn't provide calculated balance yet */}
+                    {account.initialBalance ? account.initialBalance.toLocaleString() : '0'} {t('currency')}
                 </span>
 
                 {/* Actions */}
@@ -152,6 +162,7 @@ const ChartOfAccounts = () => {
     const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(undefined);
 
     useEffect(() => {
+<<<<<<< HEAD
         fetchAccounts();
     }, [user]);
 
@@ -170,6 +181,26 @@ const ChartOfAccounts = () => {
     };
 
     const buildAccountTree = (flatList: any[]): Account[] => {
+=======
+        const fetchAccounts = async () => {
+            try {
+                const response = await accountsAPI.getAll();
+                const flatAccounts = response.data;
+                const tree = buildAccountTree(flatAccounts);
+                setAccounts(tree);
+            } catch (err) {
+                console.error('Failed to fetch accounts:', err);
+                setError('Failed to load accounts.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAccounts();
+    }, [user]);
+
+    const buildAccountTree = (flatList: Account[]): Account[] => {
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
         const map = new Map<string, Account>();
         const roots: Account[] = [];
 
@@ -243,6 +274,7 @@ const ChartOfAccounts = () => {
                     {error}
                 </div>
             )}
+
 
             {/* Accounts Tree */}
             <motion.div

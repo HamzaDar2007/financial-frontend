@@ -3,7 +3,10 @@ import { useState, useEffect } from 'react';
 import { PlusIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { itemsAPI } from '../services/api';
+<<<<<<< HEAD
 import ItemForm from './inventory/ItemForm';
+=======
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
 const Inventory = () => {
     const { t } = useLanguage();
@@ -14,6 +17,7 @@ const Inventory = () => {
     const [selectedItem, setSelectedItem] = useState<any | undefined>(undefined);
 
     useEffect(() => {
+<<<<<<< HEAD
         fetchProducts();
     }, []);
 
@@ -43,6 +47,22 @@ const Inventory = () => {
         fetchProducts();
         setIsModalOpen(false);
     };
+=======
+        const fetchProducts = async () => {
+            try {
+                const response = await itemsAPI.getAll();
+                setProducts(response.data);
+            } catch (err) {
+                console.error('Failed to fetch products:', err);
+                setError('Failed to load products.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+>>>>>>> 976e418eb7a4e2ecd6cfe2374f0a495c344c27b3
 
     return (
         <div className="space-y-6">
